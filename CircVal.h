@@ -6,10 +6,16 @@
 // CircValTester      - tester for CircVal class
 // ==========================================================================
 
+// DRN 31-Jan-2025: Replace M_PI with std::numbers::pi
+
+// DRN 31-Jan-2025: To avoid multiple defines when this header is included from multiple C++ source files:
+// - static functions must be inline (compiler can decide whether or not to actually inline)
+// - CircValTypeDef macro needs to use static constexpr to force compile-time evaluation and no storage allocation
+
 #pragma once
 
-#define _USE_MATH_DEFINES // M_PI
 #include <random>
+#include <numbers> // std::numbers::pi
 #include <assert.h>
 
 #include "FPCompare.h"
@@ -17,31 +23,25 @@
 
 // ==========================================================================
 // macro for defining a circular-value type
-#define CircValTypeDef(_Name, _L, _H, _Z)             \
-    struct _Name                                      \
-    {                                                 \
-        static const double L  ; /* range: [L,H) */   \
-        static const double H  ;                      \
-        static const double Z  ; /* zero-value   */   \
-        static const double R  ; /* range        */   \
-        static const double R_2; /* half range   */   \
-                                                      \
-        static_assert((_H>_L) && (_Z>=_L) && (_Z<_H), \
-            #_Name": Range not valid");               \
-    };                                                \
-                                                      \
-    const double _Name::L  = (_L)          ;          \
-    const double _Name::H  = (_H)          ;          \
-    const double _Name::Z  = (_Z)          ;          \
-    const double _Name::R  = ((_H)-(_L))   ;          \
-    const double _Name::R_2= ((_H)-(_L))/2.;
+#define CircValTypeDef(_Name, _L, _H, _Z)                               \
+    struct _Name                                                        \
+    {                                                                   \
+        static constexpr double L  = (_L);          /* range: [L,H) */  \
+        static constexpr double H  = (_H);                              \
+        static constexpr double Z  = (_Z);          /* zero-value   */  \
+        static constexpr double R  = ((_H)-(_L));   /* range        */  \
+        static constexpr double R_2= ((_H)-(_L))/2.;/* half range   */  \
+                                                                        \
+        static_assert((_H>_L) && (_Z>=_L) && (_Z<_H),                   \
+            #_Name": Range not valid");                                 \
+    };
 
 // ==========================================================================
 // basic circular-value types
-CircValTypeDef(SignedDegRange  , -180.,   180.,  0. )
-CircValTypeDef(UnsignedDegRange,    0.,   360.,  0. )
-CircValTypeDef(SignedRadRange  , -M_PI,   M_PI,  0. )
-CircValTypeDef(UnsignedRadRange,    0., 2*M_PI,  0. )
+CircValTypeDef(SignedDegRange  ,             -180.,               180.,  0. )
+CircValTypeDef(UnsignedDegRange,                0.,               360.,  0. )
+CircValTypeDef(SignedRadRange  , -std::numbers::pi,   std::numbers::pi,  0. )
+CircValTypeDef(UnsignedRadRange,                0., 2*std::numbers::pi,  0. )
 
 // some additional circular-value types - for testing
 CircValTypeDef(TestRange0      ,    3.,    10.,  5.3)
@@ -59,19 +59,19 @@ class CircVal
 
     // ---------------------------------------------
 public:
-    static double GetL() { return Type::L; }
-    static double GetH() { return Type::H; }
-    static double GetZ() { return Type::Z; }
-    static double GetR() { return Type::R; }
+    inline static double GetL() { return Type::L; }
+    inline static double GetH() { return Type::H; }
+    inline static double GetZ() { return Type::Z; }
+    inline static double GetR() { return Type::R; }
 
     // ---------------------------------------------
-    static bool IsInRange(double r)
+    inline static bool IsInRange(double r)
     {
         return (r>=Type::L && r<Type::H);
     }
 
     // 'wraps' circular-value to [Type::L,Type::H)
-    static double Wrap(double r)
+    inline static double Wrap(double r)
     {
         // the next lines are for optimization and improved accuracy only
         if (r>=Type::L)
@@ -89,7 +89,7 @@ public:
     // ---------------------------------------------
     // the length of shortest directed walk from c1 to c2
     // return value is in [-Type::R/2, Type::R/2)
-    static double Sdist(const CircVal& c1, const CircVal& c2)
+    inline static double Sdist(const CircVal& c1, const CircVal& c2)
     {
         double d= c2.val-c1.val;
         if (d <  -Type::R_2) return d + Type::R;
@@ -99,7 +99,7 @@ public:
 
     // the length of the shortest increasing walk from c1 to c2
     // return value is in [0, Type::R)
-    static double Pdist(const CircVal& c1, const CircVal& c2)
+    inline static double Pdist(const CircVal& c1, const CircVal& c2)
     {
         return c2.val>=c1.val ? c2.val-c1.val : Type::R-c1.val+c2.val;
     }
@@ -200,7 +200,7 @@ template <typename Type>
 class CircValTester
 {
     // check if 2 circular-values are almost equal
-    static bool IsCircAlmostEq(const CircVal<Type>& c1, const CircVal<Type>& c2)
+    inline static bool IsCircAlmostEq(const CircVal<Type>& c1, const CircVal<Type>& c2)
     {
         double r1= c1;
         double r2= c2;
@@ -215,12 +215,12 @@ class CircValTester
     }
 
     // assert that 2 circular-values are almost equal
-    static void AssertCircAlmostEq(const CircVal<Type>& c1, const CircVal<Type>& c2)
+    inline static void AssertCircAlmostEq(const CircVal<Type>& c1, const CircVal<Type>& c2)
     {
         assert(IsCircAlmostEq(c1, c2));
     }
 
-    static void Test()
+    inline static void Test()
     {
         CircVal<Type> ZeroVal= Type::Z;
 
