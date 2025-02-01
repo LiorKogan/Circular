@@ -1,6 +1,6 @@
 # Circular
 
-A C++11 library for circular values (angles, time-of-day, etc.) mathematics and statistics.
+A C++11 library for circular values (angles, time-of-day, etc.) mathematics and statistics
 
 Copyright © 2015 Lior Kogan (koganlior1 [at] gmail [dot] com)
 
