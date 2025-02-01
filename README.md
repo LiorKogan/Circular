@@ -1,4 +1,4 @@
-A C++11 infrastructure for circular values (angles, time-of-day, etc.) mathematics and statistics.
+A C++11 library for circular values (angles, time-of-day, etc.) mathematics and statistics.
 
 Many scientific and engineering problems involve circular real numbers. These numbers usually represent angular measurements (e.g., azimuth) or cyclical timestamps (e.g., time of day), but may represent other circular quantities. Circular reals are very common in physics, geodesics, and navigation, but also appear in fields such as psychology and criminology (time-of-day statistics), bird-watching, and biology (directional statistics and time-of-year statistics).
 
