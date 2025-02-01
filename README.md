@@ -16,6 +16,6 @@ Scope:
 - Parameter estimation based on noisy measurements 
 - Interpolation and average estimation of sampled continuous-time circular signal
 
-[Description and documentation](https://github.com/LiorKogan/Circular/blob/main/Doc/Circular.pdf).
+[Description and documentation](https://github.com/LiorKogan/Circular/blob/main/Doc/Circular.pdf)
 
 [CodeProject's Best C++ article, May 2011](https://www.codeproject.com/Articles/190833/Circular-Values-Math-and-Statistics-with-Cplusplus)
