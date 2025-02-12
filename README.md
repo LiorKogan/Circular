@@ -19,7 +19,7 @@ Scope:
 - Operators: comparison, circular arithmetic, trigonometric
 - Conversion between different types of circular reals
 - Conversion between circular reals and reals
-- Statistical distribution: wrapped normal, truncated normal, wrapped truncated normal 
+- Statistical distributions: wrapped normal, truncated normal, wrapped truncated normal 
 - Average, weighted average, and median
 - Parameter estimation based on noisy measurements 
 - Interpolation and average estimation of sampled continuous-time circular signal
