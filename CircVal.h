@@ -6,11 +6,11 @@
 // CircValTester      - tester for CircVal class
 // ==========================================================================
 
-// DRN 31-Jan-2025: Replace M_PI with std::numbers::pi
+// DRN 31-Jan-2025: For better portability, replace M_PI with C++ 2020 std::numbers::pi
 
 // DRN 31-Jan-2025: To avoid multiple defines when this header is included from multiple C++ source files:
 // - static functions must be inline (compiler can decide whether or not to actually inline)
-// - CircValTypeDef macro needs to use static constexpr to force compile-time evaluation and no storage allocation
+// - CircValTypeDef macro must use static constexpr to force compile-time evaluation and no storage allocation
 
 #pragma once
 
