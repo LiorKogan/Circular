@@ -92,9 +92,9 @@ public:
     inline static double Sdist(const CircVal& c1, const CircVal& c2)
     {
         double d= c2.val-c1.val;
-        if (d <  -Type::R_2) return d + Type::R;
-        if (d >=  Type::R_2) return d - Type::R;
-                             return d          ;
+        if (d <  -Type::R_2) { return d + Type::R; };
+        if (d >=  Type::R_2) { return d - Type::R; };
+                             { return d          ; };
     }
 
     // the length of the shortest increasing walk from c1 to c2
