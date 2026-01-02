@@ -20,7 +20,7 @@ template<class _Ty= double>
 class wrapped_truncated_normal_distribution
 {   // template class for wrapped truncated normal distribution
 public:
-    static_assert(_Is_RealType<_Ty>::value,
+    static_assert(std::is_floating_point<_Ty>::value,
         "invalid template argument for wrapped_truncated_normal_distribution");
 
     typedef wrapped_truncated_normal_distribution<_Ty> _Myt;

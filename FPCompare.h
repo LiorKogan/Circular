@@ -234,12 +234,13 @@ public:
 
         Bits bits= DistanceBetweenSignAndMagnitudeNumbers(u_.bits_, rhs.u_.bits_);
 
-#if 0 // ToDo Circular: DRN; why is __debugbreak used here?
-        if (bits > kMaxUlps && bits<100000000)
-            __debugbreak();
-#else
-        assert( ! (bits > kMaxUlps && bits<100000000));
-#endif
+        // Until C++26 std::breakpoint in header <debugging>...
+        #ifdef _MSC_VER
+          if (bits > kMaxUlps && bits<100000000)
+            __debugbreak(); // preferred by Lior, but MSVC-specific
+        #else
+          assert( ! (bits > kMaxUlps && bits<100000000));
+        #endif
 
         return bits <= kMaxUlps;
   }
