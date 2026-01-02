@@ -26,15 +26,15 @@ int _tmain(int argc, _TCHAR* argv[])
     // ------------------------------------------------------
     {
         CircVal   <UnsignedDegRange> Start0 ( 10.);
-        CircArcLen<UnsignedRadRange> Length0(M_PI);
+        CircArcLen<UnsignedRadRange> Length0(std::numbers::pi);
         CircArc   <SignedDegRange  > a0     (Start0, Length0); // construct by CircVal, CircArcLen
 
-        CircVal   <UnsignedRadRange> Start1 (M_PI/2  );
-        CircVal   <UnsignedRadRange> End1   (M_PI/2*3);
+        CircVal   <UnsignedRadRange> Start1 (std::numbers::pi/2  );
+        CircVal   <UnsignedRadRange> End1   (std::numbers::pi/2*3);
         CircArc   <UnsignedDegRange> a1     (Start1, End1);    // construct by CircVal, CircVal
 
         CircVal   <UnsignedDegRange> Start2 ( 10.);
-        CircVal   <UnsignedRadRange> End2   (M_PI);
+        CircVal   <UnsignedRadRange> End2   (std::numbers::pi);
         CircArc   <SignedDegRange  > a2     (Start2, End2);    // construct by CircVal, CircVal (of different types)
 
         CircArc   <UnsignedDegRange> a3     (100, 200);        // construct by double, double
