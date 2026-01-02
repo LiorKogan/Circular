@@ -90,8 +90,8 @@ template <>
 class TypeWithSize<8>
 {
 public:
-    typedef          __int64 Int ;
-    typedef unsigned __int64 UInt;
+    typedef  int64_t /*         __int64*/  Int;
+    typedef uint64_t /*unsigned __int64*/ UInt;
 };
 
 // ==========================================================================
@@ -236,8 +236,12 @@ public:
 
         Bits bits= DistanceBetweenSignAndMagnitudeNumbers(u_.bits_, rhs.u_.bits_);
 
+#if 0 // ToDo Circular: DRN; why is __debugbreak used here?
         if (bits > kMaxUlps && bits<100000000)
             __debugbreak();
+#else
+        assert( ! (bits > kMaxUlps && bits<100000000));
+#endif
 
         return bits <= kMaxUlps;
   }
@@ -304,7 +308,7 @@ static bool IsAlmostEq(T x, T y)
 }
 
 // assert that 2 floating-points are almost equal
-static void AssertAlmostEq(const double f, const double g)
+[[maybe_unused]] static void AssertAlmostEq(const double f, const double g)
 {
     assert(IsAlmostEq(f, g));
 }

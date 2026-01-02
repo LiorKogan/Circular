@@ -183,7 +183,7 @@ public:
     [[deprecated("Equality comparison of float types is risky; only use if checking 0 or identically calcd values.")]]
     bool           operator!=(const CircVal& c) const { return val != c.val;                                   }
     #ifdef __GNUC__
-        #pragma GCC diagnostic pOP
+        #pragma GCC diagnostic pop
     #endif
 
     // note that two circular values can be compared in several different ways.
