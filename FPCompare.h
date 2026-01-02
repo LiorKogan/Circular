@@ -79,10 +79,8 @@ template <>
 class TypeWithSize<4>
 {
 public:
-    // unsigned int has size 4 in both gcc and MSVC.
-    // As base/basictypes.h doesn't compile on Windows, we cannot use uint32, uint64, and etc here.
-    typedef int          Int ;
-    typedef unsigned int UInt;
+    typedef  int32_t  Int;
+    typedef uint32_t UInt;
 };
 
 // The specialization for size 8.
@@ -90,8 +88,8 @@ template <>
 class TypeWithSize<8>
 {
 public:
-    typedef  int64_t /*         __int64*/  Int;
-    typedef uint64_t /*unsigned __int64*/ UInt;
+    typedef  int64_t  Int;
+    typedef uint64_t UInt;
 };
 
 // ==========================================================================
