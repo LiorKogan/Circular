@@ -12,7 +12,7 @@
 #include "CircHelper.h" // _2Pi, Sqr
 
 #define _NRAND(eng, resty) \
-    (_STD generate_canonical<resty, static_cast<size_t>(-1)>(eng))
+    (std::generate_canonical<resty, static_cast<size_t>(-1)>(eng))
 
 // ==========================================================================
 // TEMPLATE CLASS truncated_normal_distribution
@@ -20,7 +20,7 @@ template<class _Ty= double>
 class truncated_normal_distribution
 {   // template class for truncated normal distribution
 public:
-    static_assert(_Is_RealType<_Ty>::value,
+    static_assert(std::is_floating_point<_Ty>::value,
         "invalid template argument for truncated_normal_distribution");
 
     typedef truncated_normal_distribution<_Ty> _Myt;
@@ -80,8 +80,8 @@ public:
 
         void _Init(_Ty _Mean0, _Ty _Sigma0, _Ty _A0, _Ty _B0)
         {   // set internal state
-            _RNG_ASSERT(0.  < _Sigma0, "invalid sigma argument for truncated_normal_distribution");
-            _RNG_ASSERT(_A0 < _B0    , "invalid truncation-range for truncated_normal_distribution");
+            if (_Sigma0 <  0.) throw std::domain_error("invalid sigma argument for truncated_normal_distribution"  );
+            if (_B0     < _A0) throw std::logic_error ("invalid truncation-range for truncated_normal_distribution");
             _Mean  = _Mean0 ;
             _Sigma = _Sigma0;
             _A     = _A0    ;
@@ -91,10 +91,10 @@ public:
             _NB = (_B - _Mean) / _Sigma;
 
             // decide on the fastest algorithm for our case
-            _Alg= 3;
-                 if ((_NA < 0 ) && ( _NB > 0) && (_NB - _NA > sqrt(_2Pi)))                                                                        _Alg= 0;
-            else if ((_NA >= 0) && ( _NB >  _NA + 2.*sqrt(exp(1.)) / ( _NA + sqrt(Sqr(_NA) + 4.)) * exp((_NA*2. -  _NA*sqrt(Sqr(_NA) + 4.))/4.))) _Alg= 1;
-            else if ((_NB <= 0) && (-_NA > -_NB + 2.*sqrt(exp(1.)) / (-_NB + sqrt(Sqr(_NB) + 4.)) * exp((_NB*2. - -_NB*sqrt(Sqr(_NB) + 4.))/4.))) _Alg= 2;
+            _Alg = 3;
+                 if ((_NA < 0 ) && ( _NB > 0) && (_NB - _NA > sqrt(_2Pi)))                                                                          _Alg = 0;
+            else if ((_NA >= 0) && ( _NB >  _NA + 2.*sqrt(exp(1.)) / ( _NA + sqrt(Sqr(_NA) + 4.)) * exp((_NA*2. -  _NA*sqrt(Sqr(_NA) + 4.)) / 4.))) _Alg = 1;
+            else if ((_NB <= 0) && (-_NA > -_NB + 2.*sqrt(exp(1.)) / (-_NB + sqrt(Sqr(_NB) + 4.)) * exp((_NB*2. - -_NB*sqrt(Sqr(_NB) + 4.)) / 4.))) _Alg = 2;
         }
 
         _Ty _Mean ;
@@ -153,7 +153,7 @@ public:
 
     void param(const param_type& _Par0)
     {   // set parameter package
-        _Par= _Par0;
+        _Par = _Par0;
         reset();
     }
 
@@ -222,7 +222,7 @@ private:
             {
                 normal_distribution<_Ty> nd;
                 do  { _Res = nd(_Eng); }
-                while (_Res<_Par0._NA || _Res>_Par0._NB);
+                while (_Res < _Par0._NA || _Res > _Par0._NB);
                 break;
             }
 
@@ -233,11 +233,11 @@ private:
 
                 do
                 {
-                    a = (_Par0._NA + sqrt(Sqr(_Par0._NA)+4.))/2.;
-                    z = ed(_Eng, exponential_distribution<_Ty>::param_type(a)) + _Par0._NA;
+                    a = (_Par0._NA + sqrt(Sqr(_Par0._NA)+4.)) / 2.;
+                    z = ed(_Eng, typename exponential_distribution<_Ty>::param_type(a)) + _Par0._NA;
                     u = _NRAND(_Eng, _Ty);
                 }
-                while ((u>exp(-Sqr(z-a)/2.)) || (z>_Par0._NB));
+                while ((u > exp(-Sqr(z-a) / 2.)) || (z > _Par0._NB));
 
                 _Res = z;
                 break;
@@ -250,11 +250,11 @@ private:
 
                 do
                 {
-                    a = (-_Par0._NB + sqrt(Sqr(_Par0._NB)+4.))/2.;
-                    z = ed(_Eng, exponential_distribution<_Ty>::param_type(a)) - _Par0._NB;
+                    a = (-_Par0._NB + sqrt(Sqr(_Par0._NB) + 4.)) / 2.;
+                    z = ed(_Eng, typename exponential_distribution<_Ty>::param_type(a)) - _Par0._NB;
                     u = _NRAND(_Eng, _Ty);
                 }
-                while ((u>exp(-Sqr(z-a)/2.)) || (z>-_Par0._NA));
+                while ((u > exp(-Sqr(z-a) / 2.)) || (z > -_Par0._NA));
 
                 _Res = -z;
                 break;
@@ -270,11 +270,11 @@ private:
                     z = ud(_Eng);
                     u = _NRAND(_Eng, _Ty);
 
-                         if (_Par0._NA>0) rho = exp((Sqr(_Par0._NA)-Sqr(z))/2.);
-                    else if (_Par0._NB<0) rho = exp((Sqr(_Par0._NB)-Sqr(z))/2.);
-                    else                  rho = exp(               -Sqr(z) /2.);
+                         if (_Par0._NA > 0) rho = exp((Sqr(_Par0._NA) - Sqr(z)) / 2.);
+                    else if (_Par0._NB < 0) rho = exp((Sqr(_Par0._NB) - Sqr(z)) / 2.);
+                    else                    rho = exp(                - Sqr(z)  / 2.);
                 }
-                while (u>rho);
+                while (u > rho);
 
                 _Res = z;
             }

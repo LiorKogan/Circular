@@ -139,7 +139,7 @@ set<CircVal<T>> CircAverage(vector<CircVal<T>> const& A)
     double fUpperBound = 360.; // of current sector
     double fSumC       =   0.; // of elements of set C
 
-    iter= UpperAngles.begin();
+    iter = UpperAngles.begin();
     for (size_t c = 0; c < UpperAngles.size(); ++c)
     {
         // 1st  iteration : average in [upperAngles[0]-180, 360                 )
@@ -352,7 +352,7 @@ set<CircVal<T>> WeightedCircAverage(vector<pair<CircVal<T>,double>> const& A) //
     double fCSumW      =   0.; // sum(Wi   ) of all elements of C
     double fCSumWC     =   0.; // sum(Wi*Ci) of all elements of C
 
-    iter= UpperAngles.begin();
+    iter = UpperAngles.begin();
     for (size_t c = 0; c < UpperAngles.size(); ++c)
     {
         // 1st  iteration : average in [upperAngles[0]-180, 360                 )
