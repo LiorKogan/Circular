@@ -1,0 +1,5 @@
+# Visual Studio stuff
+.vs
+x64
+*.vcxproj.user
+Circular/
