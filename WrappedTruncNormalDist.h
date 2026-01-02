@@ -89,12 +89,11 @@ public:
         {   // return fastest algorithm for the given parameters
             return _Alg;
         }
-
         void _Init(_Ty _Mean0, _Ty _Sigma0, _Ty _A0, _Ty _B0, _Ty _L0, _Ty _H0)
         {   // set internal state
-            _RNG_ASSERT(0.  < _Sigma0, "invalid sigma argument for wrapped_truncated_normal_distribution"  );
-            _RNG_ASSERT(_A0 < _B0    , "invalid truncation-range for wrapped_truncated_normal_distribution");
-            _RNG_ASSERT(_L0 < _H0    , "invalid wrapping-range for wrapped_truncated_normal_distribution"  );
+            Replace_RNG_ASSERT(0.  < _Sigma0, "invalid sigma argument for wrapped_truncated_normal_distribution"  );
+            Replace_RNG_ASSERT(_A0 < _B0    , "invalid truncation-range for wrapped_truncated_normal_distribution");
+            Replace_RNG_ASSERT(_L0 < _H0    , "invalid wrapping-range for wrapped_truncated_normal_distribution"  );
             _Mean  = _Mean0 ;
             _Sigma = _Sigma0;
             _A     = _A0    ;

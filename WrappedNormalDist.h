@@ -74,8 +74,8 @@ public:
 
         void _Init(_Ty _Mean0, _Ty _Sigma0, _Ty _L0, _Ty _H0)
         {   // set internal state
-            _RNG_ASSERT(0.  < _Sigma0, "invalid sigma argument for wrapped_normal_distribution");
-            _RNG_ASSERT(_L0 < _H0    , "invalid wrapping-range for wrapped_normal_distribution");
+            Replace_RNG_ASSERT(0.  < _Sigma0, "invalid sigma argument for wrapped_normal_distribution");
+            Replace_RNG_ASSERT(_L0 < _H0    , "invalid wrapping-range for wrapped_normal_distribution");
             _Mean  = _Mean0 ;
             _Sigma = _Sigma0;
             _L     = _L0    ;
