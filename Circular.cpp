@@ -179,7 +179,7 @@ int _tmain(int argc, _TCHAR* argv[])
             auto y= CircAverage (Angles2);
         }
         auto Duration = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - Time0).count();
-        cout << Duration << endl;
+        cout << Duration << endl << std::flush;
 
         Time0 = chrono::system_clock::now();
         for (int i = 0; i<100000; i++)
@@ -192,7 +192,7 @@ int _tmain(int argc, _TCHAR* argv[])
         Duration = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - Time0).count();
         cout << Duration << endl;
 
-        cout << "=================" << endl;
+        cout << "=================" << endl << std::flush;
     }
 
     // ------------------------------------------------------
@@ -309,7 +309,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     // -----------------------------------
     auto Duration = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - Time0).count();
-    cout << Duration << endl;
+    cout << std::flush << Duration << endl << std::flush;
 
     // system ("pause");
 
