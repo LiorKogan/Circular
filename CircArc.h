@@ -43,7 +43,7 @@ public:
     // construction based on a circular arc length another type
     // sample use: CircArcLen<SignedRadRange> c= c2;   -or-   CircArcLen<SignedRadRange> c(c2);
     template<typename Type2>
-    CircArcLen(const CircArcLen<Type2>& c) : l((c == Type2::R) ? Type::R : Type::R/Type2::R * c) // ... to avoid rounding errors
+    CircArcLen(const CircArcLen<Type2>& c) : l((c == Type2::R) ? Type::R : Type::R / Type2::R * c) // ... to avoid rounding errors
     {
     }
 
@@ -67,7 +67,7 @@ public:
     template<typename Type2>
     CircArcLen& operator= (const CircArcLen<Type2>& c)
     {
-        l = (c == Type2::R) ? Type::R : Type::R/Type2::R * c; // ... to avoid rounding errors
+        l = (c == Type2::R) ? Type::R : Type::R / Type2::R * c; // ... to avoid rounding errors
         return *this;
     }
 };
@@ -115,7 +115,7 @@ public:
     }
 
     // construction based on another circular arc of same/different circular-value type
-    // sample use: CircArc<SignedRadRange> a= a2;   -or-   CircArc<SignedRadRange> a(a2);
+    // sample use: CircArc<SignedRadRange> a = a2;   -or-   CircArc<SignedRadRange> a(a2);
     template<typename Type2>
     CircArc(const CircArc<Type2>& a) : c1(a.GetC1()), c2(a.GetC2()), l(a.GetL())
     {
@@ -135,18 +135,15 @@ public:
     // ---------------------------------------------
     bool operator==(const CircArc& a) const
     {
-        if ( (l == Type::R) && (a.l == Type::R) ) // both are full-circle; start-point doesn't matter
+        if ((l == Type::R) && (a.l == Type::R)) // both are full-circle; start-point doesn't matter
             return true;
 
-        return (c1 == a.c1) && (l == a.l);
+        return std::equal_to<decltype(c1)>{}(c1, a.c1) && std::equal_to<decltype(l)>{}(l, a.l); // std::equal_to instead of == to avoid triggering -Wfloat-equal
     }
 
     bool operator!=(const CircArc& a) const
     {
-        if ( (l == Type::R) && (a.l == Type::R) ) // both are full-circle; start-point doesn't matter
-            return false;
-
-        return (c1 != a.c1) || (l != a.l);
+        return !(*this == a);
     }
 
     // check if this arc contains a circular value (note that arc contains its endpoints)

@@ -13,8 +13,6 @@
 
 #pragma once
 
-#define GTEST_OS_WINDOWS 1
-
 // ==========================================================================
 // Copyright 2005, Google Inc.
 // All rights reserved.
@@ -119,7 +117,7 @@ public:
 //   For double, there are 11 exponent bits and 52 fraction bits.
 //
 //   More details can be found at
-//   http://en.wikipedia.org/wiki/IEEE_floating-point_standard.
+//   https://en.wikipedia.org/wiki/IEEE_floating-point_standard.
 //
 // Template parameter:
 //
@@ -128,13 +126,14 @@ template <typename RawType>
 class FloatingPoint
 {
 public:
-    // Defines the unsigned integer type that has the same size as the floating point number
+    // Defines the unsigned integer type that has the same size as the
+    // floating point number.
     typedef typename TypeWithSize<sizeof(RawType)>::UInt Bits;
 
     // Constants.
 
     // # of bits in a number.
-    static const size_t kBitCount = 8*sizeof(RawType);
+    static const size_t kBitCount = 8 * sizeof(RawType);
 
     // # of fraction bits in a number.
     static const size_t kFractionBitCount =
@@ -147,8 +146,8 @@ public:
     static const Bits kSignBitMask = static_cast<Bits>(1) << (kBitCount - 1);
 
     // The mask for the fraction bits.
-    static const Bits kFractionBitMask =
-    ~static_cast<Bits>(0) >> (kExponentBitCount + 1);
+    static const Bits kFractionBitMask = ~static_cast<Bits>(0) >>
+                                         (kExponentBitCount + 1);
 
     // The mask for the exponent bits.
     static const Bits kExponentBitMask = ~(kSignBitMask | kFractionBitMask);
@@ -161,11 +160,11 @@ public:
     // The maximum error of a single floating-point operation is 0.5
     // units in the last place.  On Intel CPU's, all floating-point
     // calculations are done with 80-bit precision, while double has 64
-    // bits.
+    // bits.  Therefore, 4 should be enough for ordinary use.
     //
     // See the following article for more details on ULP:
-    // http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm.
-    static const size_t kMaxUlps= 5000000;
+    // https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
+    static const size_t kMaxUlps = 5000000;
 
     // Constructs a FloatingPoint from a raw floating-point number.
     //
@@ -173,30 +172,27 @@ public:
     // around may change its bits, although the new value is guaranteed
     // to be also a NAN.  Therefore, don't expect this constructor to
     // preserve the bits in x when x is a NAN.
-    explicit FloatingPoint(const RawType& x) { u_.value_ = x; }
+    explicit FloatingPoint(RawType x) { memcpy(&u_.bits_, &x, sizeof(x)); }
 
     // Static methods
 
     // Reinterprets a bit pattern as a floating-point number.
     //
     // This function is needed to test the AlmostEquals() method.
-    static RawType ReinterpretBits(const Bits bits)
+    static RawType ReinterpretBits(Bits bits)
     {
-        FloatingPoint fp(0);
-        fp.u_.bits_ = bits;
-        return fp.u_.value_;
+        RawType fp;
+        memcpy(&fp, &bits, sizeof(fp));
+        return fp;
     }
 
     // Returns the floating-point number that represent positive infinity.
-    static RawType Infinity()
-    {
-        return ReinterpretBits(kExponentBitMask);
-    }
+    static RawType Infinity() { return ReinterpretBits(kExponentBitMask); }
 
     // Non-static methods
 
     // Returns the bits that represents this number.
-    const Bits &bits() const { return u_.bits_; }
+    const Bits& bits() const { return u_.bits_; }
 
     // Returns the exponent bits of this number.
     Bits exponent_bits() const { return kExponentBitMask & u_.bits_; }
@@ -207,7 +203,7 @@ public:
     // Returns the sign bit of this number.
     Bits sign_bit() const { return kSignBitMask & u_.bits_; }
 
-    // Returns true iff this is NAN (not a number).
+    // Returns true if and only if this is NAN (not a number).
     bool is_nan() const
     {
         // It's a NAN if the exponent bits are all ones and the fraction
@@ -215,32 +211,24 @@ public:
         return (exponent_bits() == kExponentBitMask) && (fraction_bits() != 0);
     }
 
-    // Returns true iff this number is at most kMaxUlps ULP's away from
-    // rhs.  In particular, this function:
+    // Returns true if and only if this number is at most kMaxUlps ULP's away
+    // from rhs.  In particular, this function:
     //
     //   - returns false if either number is (or both are) NAN.
     //   - treats really large numbers as almost equal to infinity.
-    //   - thinks +0.0 and -0.0 are 0 DLP's apart.
+    //   - thinks +0.0 and -0.0 are 0 ULP's apart.
     bool AlmostEquals(const FloatingPoint& rhs) const
     {
         // The IEEE standard says that any comparison operation involving
         // a NAN must return false.
-        if (is_nan() || rhs.is_nan())
-            return false;
+        if (is_nan() || rhs.is_nan()) return false;
 
         // Lior Kogan, 25/9/2010: e.g. for comparing 1e-13 with exact 0
         if (fabs(u_.value_ - rhs.u_.value_) < 1e-12)
             return true;
 
-        Bits bits= DistanceBetweenSignAndMagnitudeNumbers(u_.bits_, rhs.u_.bits_);
-
-        // Until C++26 std::breakpoint in header <debugging>...
-        #ifdef _MSC_VER
-          if (bits > kMaxUlps && bits<100000000)
-            __debugbreak(); // preferred by Lior, but MSVC-specific
-        #else
-          assert( ! (bits > kMaxUlps && bits<100000000));
-        #endif
+        Bits bits = DistanceBetweenSignAndMagnitudeNumbers(u_.bits_, rhs.u_.bits_);
+        assert( ! (bits > kMaxUlps && bits<100000000));
 
         return bits <= kMaxUlps;
   }
@@ -266,7 +254,7 @@ public:
     //   N - 1  (the biggest number representable using
     //          sign-and-magnitude) is represented by 2N - 1.
     //
-    // Read http://en.wikipedia.org/wiki/Signed_number_representations
+    // Read https://en.wikipedia.org/wiki/Signed_number_representations
     // for more details on signed number representations.
     static Bits SignAndMagnitudeToBiased(const Bits &sam)
     {
@@ -283,7 +271,7 @@ public:
     {
         const Bits biased1 = SignAndMagnitudeToBiased(sam1);
         const Bits biased2 = SignAndMagnitudeToBiased(sam2);
-        Bits bits= (biased1 >= biased2) ? (biased1 - biased2) : (biased2 - biased1);
+        Bits bits = (biased1 >= biased2) ? (biased1 - biased2) : (biased2 - biased1);
         return bits;
     }
 

@@ -2,10 +2,10 @@
 // Copyright (C) 2011 Lior Kogan (koganlior1@gmail.com)
 // ==========================================================================
 // classes defined here:
-// CircAverage            - calculate average set of circular-values
-// WeightedCircAverage    - calculate weighted-average set of circular-values
+// CircAverage            - calculate average set of circular values
+// WeightedCircAverage    - calculate weighted-average set of circular values
 // CAvrgSampledCircSignal - estimate the average of a sampled continuous-time circular signal, using circular linear interpolation
-// CircMedian             - calculate median set of circular-values
+// CircMedian             - calculate median set of circular values
 // ==========================================================================
 
 #pragma once
@@ -21,7 +21,7 @@
 using namespace std;
 
 // ==========================================================================
-// calculate average set of circular-values
+// calculate average set of circular values
 // return set of average values
 // T is a circular value type defined with the CircValTypeDef macro
 template<typename T>
@@ -171,7 +171,7 @@ set<CircVal<T>> CircAverage(vector<CircVal<T>> const& A)
 }
 
 // ==========================================================================
-// calculate average set of circular-values
+// calculate average set of circular values
 // return set of average values
 // T is a circular value type defined with the CircValTypeDef macro
 template<typename T>
@@ -220,7 +220,7 @@ set<CircVal<T>> CircAverage2(vector<CircVal<T>> const& A)
 }
 
 // ==========================================================================
-// calculate weighted-average set of circular-values
+// calculate weighted-average set of circular values
 // return set of average values
 // T is a circular value type defined with the CircValTypeDef macro
 template<typename T>
@@ -403,8 +403,8 @@ public:
         {
             assert(fTime > m_fPrevTime);
 
-            double fIntervalAvrg   = CircVal<T>::Wrap((double)m_PrevC + CircVal<T>::Sdist(m_PrevC, C)/2.);
-            double fIntervalWeight = fTime-m_fPrevTime                                                   ;
+            double fIntervalAvrg   = CircVal<T>::Wrap((double)m_PrevC + CircVal<T>::Sdist(m_PrevC, C) / 2.);
+            double fIntervalWeight = fTime - m_fPrevTime                                                   ;
             m_Intervals.emplace_back(fIntervalAvrg, fIntervalWeight);
         }
 
@@ -434,7 +434,7 @@ public:
 };
 
 // ==========================================================================
-// calculate median set of circular-values
+// calculate median set of circular values
 // return set of median values
 // T is a circular value type defined with the CircValTypeDef macro
 template<typename T>
@@ -451,13 +451,13 @@ set<CircVal<T>> CircMedian(vector<CircVal<T>> const& A)
 
         for (size_t m = 0; m < S.size(); ++m)
         {
-            size_t n = m+1; if (n==S.size()) n = 0;
+            size_t n = m+1; if (n == S.size()) n = 0;
             double d = CircVal<T>::Sdist(S[m], S[n]);
 
             // insert average set of each two circular-consecutive values
-            B.emplace((double)S[m] + d/2.);
-            if (d == -CircVal<T>::GetR()/2.)
-                B.emplace((double)S[n] + d/2.);
+            B.emplace((double)S[m] + d / 2.);
+            if (d == -CircVal<T>::GetR() / 2.)
+                B.emplace((double)S[n] + d / 2.);
         }
     }
     else                          // odd number of values

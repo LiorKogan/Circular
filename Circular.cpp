@@ -3,8 +3,6 @@
 // ==========================================================================
 
 #include "stdafx.h"
-#include "CircVal.h"
-#include "CircArc.h"
 
 #include <chrono>
 #include <iostream>                 // cout
@@ -15,9 +13,9 @@
 #include <ranges>                   // std::views::iota
 #include <execution>                // std::execution::par
 #include <syncstream>               // std::osyncstream
-#include <syncstream>               // std::osyncstream
 
 #include "CircVal.h"                // CircVal, CircValTester
+#include "CircArc.h"                // CircArcLen, CircArc, CircArcTester
 #include "CircStat.h"               // CircAverage, WeightedCircAverage, CAvrgSampledCircSignal, CircMedian
 #include "CircHelper.h"             // Sqr, Mod
 #include "TruncNormalDist.h"        // truncated_normal_distribution
@@ -177,9 +175,9 @@ int _tmain(int argc, _TCHAR* argv[])
         vector<CircVal<UnsignedDegRange>> Angles2(count);
 
         auto Time0 = chrono::system_clock::now();
-        for (int i = 0; i<100000; i++)
+        for (size_t i = 0; i < 100000; i++)
         {
-            for (int j = 0; j< count; ++j)
+            for (size_t j = 0; j < count; ++j)
                 Angles2[j] = ud(rand_engine);
 
             auto y = CircAverage (Angles2);
@@ -191,7 +189,7 @@ int _tmain(int argc, _TCHAR* argv[])
         Time0 = chrono::system_clock::now();
         for (int i = 0; i < 100000; i++)
         {
-            for (int j = 0; j < count; ++j)
+            for (size_t j = 0; j < count; ++j)
                 Angles2[j] = ud(rand_engine);
 
             auto z = CircAverage2(Angles2);
@@ -223,7 +221,7 @@ int _tmain(int argc, _TCHAR* argv[])
     }
 
     // ------------------------------------------------------
-    // sample code: calculate median, average and weighted-average set of circular-values
+    // sample code: calculate median, average and weighted-average set of circular values
     {
         std::default_random_engine rand_engine;
         std::random_device         rnd_device ;
@@ -234,7 +232,7 @@ int _tmain(int argc, _TCHAR* argv[])
         vector<     CircVal<UnsignedDegRange>        > angles1;
         vector<pair<CircVal<UnsignedDegRange>,double>> angles2;
 
-        for (size_t i = 0; i<3; ++i)
+        for (size_t i = 0; i < 3; ++i)
         {
             double m = ud(rand_engine);
             angles1.emplace_back(m     );
