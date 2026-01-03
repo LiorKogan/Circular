@@ -178,9 +178,9 @@ public:
         #pragma GCC diagnostic push
         #pragma GCC diagnostic ignored "-Wfloat-equal"
     #endif
-    [[deprecated("Equality comparison of float types is risky; only use if checking 0 or identically calcd values.")]]
+    [[deprecated("Equality comparison of float types is risky; only use if checking exact 0 or identically calcd values.")]]
     bool           operator==(const CircVal& c) const { return val == c.val;                                   }
-    [[deprecated("Equality comparison of float types is risky; only use if checking 0 or identically calcd values.")]]
+    [[deprecated("Equality comparison of float types is risky; only use if checking exact 0 or identically calcd values.")]]
     bool           operator!=(const CircVal& c) const { return val != c.val;                                   }
     #ifdef __GNUC__
         #pragma GCC diagnostic pop

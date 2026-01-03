@@ -9,7 +9,7 @@
 #pragma once
 
 #include <random>
-#include "CircHelper.h" // _2Pi, Sqr, Mod
+#include "CircHelper.h" // Sqr, Mod
 
 #define _NRAND(eng, resty) \
     (std::generate_canonical<resty, static_cast<size_t>(-1)>(eng))
@@ -107,7 +107,7 @@ public:
 
             // decide on the fastest algorithm for our case
             _Alg = 3;
-                 if ((_NA < 0 ) && ( _NB > 0) && (_NB - _NA > sqrt(_2Pi)))                                                                        _Alg = 0;
+                 if ((_NA < 0 ) && ( _NB > 0) && (_NB - _NA > sqrt(2.0 * std::numbers::pi)))                                                                        _Alg = 0;
             else if ((_NA >= 0) && ( _NB >  _NA + 2.*sqrt(exp(1.)) / ( _NA + sqrt(Sqr(_NA) + 4.)) * exp((_NA*2. -  _NA*sqrt(Sqr(_NA) + 4.))/4.))) _Alg = 1;
             else if ((_NB <= 0) && (-_NA > -_NB + 2.*sqrt(exp(1.)) / (-_NB + sqrt(Sqr(_NB) + 4.)) * exp((_NB*2. - -_NB*sqrt(Sqr(_NB) + 4.))/4.))) _Alg = 2;
         }
