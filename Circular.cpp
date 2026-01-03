@@ -9,7 +9,13 @@
 #include <chrono>
 #include <iostream>                 // cout
 #include <fstream>                  // ofstream
-#include <ppl.h>                    // Concurrency::parallel_for
+#include <numbers>                  // std::numbers::pi
+#include <random>                   // random number generators 
+
+#include <ranges>                   // std::views::iota
+#include <execution>                // std::execution::par
+#include <syncstream>               // std::osyncstream
+#include <syncstream>               // std::osyncstream
 
 #include "CircVal.h"                // CircVal, CircValTester
 #include "CircStat.h"               // CircAverage, WeightedCircAverage, CAvrgSampledCircSignal, CircMedian
@@ -25,21 +31,21 @@ int _tmain(int argc, _TCHAR* argv[])
 
     // ------------------------------------------------------
     {
-        CircVal   <UnsignedDegRange> Start0 ( 10.);
-        CircArcLen<UnsignedRadRange> Length0(std::numbers::pi);
-        CircArc   <SignedDegRange  > a0     (Start0, Length0); // construct by CircVal, CircArcLen
+        CircVal   <UnsignedDegRange> Start0 ( 10.                );
+        CircArcLen<UnsignedRadRange> Length0(std::numbers::pi    );
+        CircArc   <SignedDegRange  > a0     (Start0, Length0     ); // construct by CircVal, CircArcLen
 
         CircVal   <UnsignedRadRange> Start1 (std::numbers::pi/2  );
         CircVal   <UnsignedRadRange> End1   (std::numbers::pi/2*3);
-        CircArc   <UnsignedDegRange> a1     (Start1, End1);    // construct by CircVal, CircVal
+        CircArc   <UnsignedDegRange> a1     (Start1, End1        ); // construct by CircVal, CircVal
 
-        CircVal   <UnsignedDegRange> Start2 ( 10.);
-        CircVal   <UnsignedRadRange> End2   (std::numbers::pi);
-        CircArc   <SignedDegRange  > a2     (Start2, End2);    // construct by CircVal, CircVal (of different types)
+        CircVal   <UnsignedDegRange> Start2 ( 10.                );
+        CircVal   <UnsignedRadRange> End2   (std::numbers::pi    );
+        CircArc   <SignedDegRange  > a2     (Start2, End2        ); // construct by CircVal, CircVal (of different types)
 
-        CircArc   <UnsignedDegRange> a3     (100, 200);        // construct by double, double
-        CircArc   <UnsignedRadRange> a4     (a3);              // construct by CircArc (of different type)
-        a4 = a3;                                               // assignment operator
+        CircArc   <UnsignedDegRange> a3     (100, 200            ); // construct by double, double
+        CircArc   <UnsignedRadRange> a4     (a3                  ); // construct by CircArc (of different type)
+        a4 = a3;                                                    // assignment operator
 
         bool b1 = a3.Contains( 50 );
         bool b2 = a3.Contains(100 );
@@ -176,19 +182,21 @@ int _tmain(int argc, _TCHAR* argv[])
             for (int j = 0; j< count; ++j)
                 Angles2[j] = ud(rand_engine);
 
-            auto y= CircAverage (Angles2);
+            auto y = CircAverage (Angles2);
         }
+
         auto Duration = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - Time0).count();
         cout << Duration << endl << std::flush;
 
         Time0 = chrono::system_clock::now();
-        for (int i = 0; i<100000; i++)
+        for (int i = 0; i < 100000; i++)
         {
-            for (int j = 0; j< count; ++j)
+            for (int j = 0; j < count; ++j)
                 Angles2[j] = ud(rand_engine);
 
             auto z = CircAverage2(Angles2);
         }
+
         Duration = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - Time0).count();
         cout << Duration << endl;
 
@@ -204,7 +212,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
         ofstream f0("log0.txt");
 
-        for (double x = 0.; x<=360.; x+= 0.1)
+        for (double x = 0.; x <= 360.; x += 0.1)
         {
             double fSum = 0;
             for (const auto& a : Angles2)
@@ -259,8 +267,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
         ofstream f1("log1.txt");
 
-        Concurrency::parallel_for(1, 101, [&](int nStdDev)  // for each value of standard-deviation
+        auto numbers = std::views::iota(1, 101); // for each value of standard-deviation: 1..100
+        std::for_each(std::execution::par, numbers.begin(), numbers.end(), [&rand_engine, &f1](int nStdDev) 
         {
+            std::osyncstream(std::cout) << "StdDev: " << nStdDev << endl;
+
             uniform_real_distribution<double> ud(0., 360.);
 
             double fSumSqrErr1 = 0.;
@@ -275,7 +286,7 @@ int _tmain(int argc, _TCHAR* argv[])
             wrapped_normal_distribution          <double> r_wnd1(fAvrg, nStdDev,                       0., 360.);
          // wrapped_truncated_normal_distribution<double> r_wnd1(fAvrg, nStdDev, fAvrg-45., fAvrg+45., 0., 360.);
 
-            for (size_t t = 0; t<nTrails; ++t)
+            for (size_t t = 0; t < nTrails; ++t)
             {
                 for (auto& Sample : vInput)
                     Sample = r_wnd1(rand_engine);           // generate "noisy" observation
@@ -303,13 +314,13 @@ int _tmain(int argc, _TCHAR* argv[])
             const double fRMS1 = sqrt(fSumSqrErr1 / (nTrails-1));  // root mean square error - method 1
             const double fRMS2 = sqrt(fSumSqrErr2 / (nTrails-1));  // root mean square error - method 2
 
-            f1 << nStdDev << "\t" << fRMS1 << "\t" << fRMS2 << endl; // save RMS results to file
+            std::osyncstream(f1) << nStdDev << "\t" << fRMS1 << "\t" << fRMS2 << endl; // save RMS results to file
         } );
     }
 
     // -----------------------------------
     auto Duration = chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - Time0).count();
-    cout << std::flush << Duration << endl << std::flush;
+    cout << Duration << endl << std::flush;
 
     // system ("pause");
 

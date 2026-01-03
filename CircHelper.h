@@ -60,8 +60,3 @@ T Mod(T x, T y)
 
     return m;
 }
-
-// Replacement for non-standard deprecated MSVC internal <random> _RNG_ASSERT
-inline void Replace_RNG_ASSERT(bool t, const char* s) {
-    if (!t) throw std::out_of_range(s);
-}

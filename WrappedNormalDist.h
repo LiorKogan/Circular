@@ -10,7 +10,7 @@
 #include "CircHelper.h" // Mod
 
 #define _NRAND(eng, resty) \
-    (_STD generate_canonical<resty, static_cast<size_t>(-1)>(eng))
+    (std::generate_canonical<resty, static_cast<size_t>(-1)>(eng))
 
 // ==========================================================================
 // TEMPLATE CLASS wrapped_normal_distribution
@@ -74,8 +74,9 @@ public:
 
         void _Init(_Ty _Mean0, _Ty _Sigma0, _Ty _L0, _Ty _H0)
         {   // set internal state
-            Replace_RNG_ASSERT(0.  < _Sigma0, "invalid sigma argument for wrapped_normal_distribution");
-            Replace_RNG_ASSERT(_L0 < _H0    , "invalid wrapping-range for wrapped_normal_distribution");
+            
+            if (_Sigma0 <  0.) throw std::domain_error("invalid sigma argument for wrapped_normal_distribution");
+            if (_H0     < _L0) throw std::logic_error ("invalid wrapping-range for wrapped_normal_distribution");
             _Mean  = _Mean0 ;
             _Sigma = _Sigma0;
             _L     = _L0    ;
@@ -88,10 +89,10 @@ public:
         _Ty _H    ;
     };
 
-    explicit wrapped_normal_distribution(_Ty _Mean0 =    0.,
-                                         _Ty _Sigma0=   45.,
-                                         _Ty _L0    = -180.,  // wrapping-range lower-bound
-                                         _Ty _H0    =  180. ) // wrapping-range upper-bound
+    explicit wrapped_normal_distribution(_Ty _Mean0  =    0.,
+                                         _Ty _Sigma0 =   45.,
+                                         _Ty _L0     = -180.,  // wrapping-range lower-bound
+                                         _Ty _H0     =  180. ) // wrapping-range upper-bound
         : _Par(_Mean0, _Sigma0, _L0, _H0), _Valid(false), _X2(0)
     {   // construct
     }
@@ -133,7 +134,7 @@ public:
 
     void param(const param_type& _Par0)
     {   // set parameter package
-        _Par= _Par0;
+        _Par = _Par0;
         reset();
     }
 
@@ -219,7 +220,7 @@ private:
                     break;
             }
 
-            double _Fx= _CSTD sqrt(-2. * _CSTD log(_Sx) / _Sx);
+            double _Fx = std::sqrt(-2. * std::log(_Sx) / _Sx);
             if (_Keep)
             {   // save second value for next call
                 _X2    = _Fx * _V2;
