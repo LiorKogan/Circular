@@ -6,6 +6,9 @@ Copyright © 2015 Lior Kogan (koganlior1 [at] gmail [dot] com)
 
 Released under the Apache License, Version 2.0
 
+[Primary maintained copy](https://github.com/LiorKogan/Circular) <br>
+[Also at](https://github.com/DRNadler/Circular])
+
 --
 
 Many scientific and engineering problems involve circular real numbers. These numbers usually represent angular measurements (e.g., azimuth) or cyclical timestamps (e.g., time of day), but may represent other circular quantities. Circular reals are very common in physics, geodesics, and navigation, but also appear in fields such as psychology and criminology (time-of-day statistics), bird-watching, and biology (directional statistics and time-of-year statistics).
