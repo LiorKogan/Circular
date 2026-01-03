@@ -79,10 +79,8 @@ template <>
 class TypeWithSize<4>
 {
 public:
-    // unsigned int has size 4 in both gcc and MSVC.
-    // As base/basictypes.h doesn't compile on Windows, we cannot use uint32, uint64, and etc here.
-    typedef int          Int ;
-    typedef unsigned int UInt;
+    typedef  int32_t  Int;
+    typedef uint32_t UInt;
 };
 
 // The specialization for size 8.
@@ -90,8 +88,8 @@ template <>
 class TypeWithSize<8>
 {
 public:
-    typedef          __int64 Int ;
-    typedef unsigned __int64 UInt;
+    typedef  int64_t  Int;
+    typedef uint64_t UInt;
 };
 
 // ==========================================================================
@@ -236,8 +234,13 @@ public:
 
         Bits bits= DistanceBetweenSignAndMagnitudeNumbers(u_.bits_, rhs.u_.bits_);
 
-        if (bits > kMaxUlps && bits<100000000)
-            __debugbreak();
+        // Until C++26 std::breakpoint in header <debugging>...
+        #ifdef _MSC_VER
+          if (bits > kMaxUlps && bits<100000000)
+            __debugbreak(); // preferred by Lior, but MSVC-specific
+        #else
+          assert( ! (bits > kMaxUlps && bits<100000000));
+        #endif
 
         return bits <= kMaxUlps;
   }
@@ -304,7 +307,7 @@ static bool IsAlmostEq(T x, T y)
 }
 
 // assert that 2 floating-points are almost equal
-static void AssertAlmostEq(const double f, const double g)
+[[maybe_unused]] static void AssertAlmostEq(const double f, const double g)
 {
     assert(IsAlmostEq(f, g));
 }

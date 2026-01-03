@@ -6,6 +6,8 @@
 // CircValTester      - tester for CircVal class
 // ==========================================================================
 
+// DRN 2-Jan-2026: Deprecate float equality operators, and suppress GCC warning->error.
+
 // DRN 31-Jan-2025: For better portability, replace M_PI with C++ 2020 std::numbers::pi
 
 // DRN 31-Jan-2025: To avoid multiple defines when this header is included from multiple C++ source files:
@@ -22,7 +24,7 @@
 #include "CircHelper.h"   // Mod
 
 // ==========================================================================
-// macro for defining a circular-value type
+// use this macro to define a circular-value type
 #define CircValTypeDef(_Name, _L, _H, _Z)                               \
     struct _Name                                                        \
     {                                                                   \
@@ -37,13 +39,13 @@
     };
 
 // ==========================================================================
-// basic circular-value types
+// define basic circular-value types
 CircValTypeDef(SignedDegRange  ,             -180.,               180.,  0. )
 CircValTypeDef(UnsignedDegRange,                0.,               360.,  0. )
 CircValTypeDef(SignedRadRange  , -std::numbers::pi,   std::numbers::pi,  0. )
 CircValTypeDef(UnsignedRadRange,                0., 2*std::numbers::pi,  0. )
 
-// some additional circular-value types - for testing
+// for testing only, define some additional circular-value types
 CircValTypeDef(TestRange0      ,    3.,    10.,  5.3)
 CircValTypeDef(TestRange1      ,   -3.,    10., -3.0)
 CircValTypeDef(TestRange2      ,   -3.,    10.,  9.9)
@@ -172,9 +174,17 @@ public:
           CircVal& operator/=(const double&  r)       { val= Wrap((val-Type::Z)/r    + Type::Z); return *this; }
 
           CircVal& operator =(const CircVal& c)       { val= c.val                             ; return *this; }
-
+    #ifdef __GNUC__
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wfloat-equal"
+    #endif
+    [[deprecated("Equality comparison of float types is risky; only use if checking exact 0 or identically calcd values.")]]
     bool           operator==(const CircVal& c) const { return val == c.val;                                   }
+    [[deprecated("Equality comparison of float types is risky; only use if checking exact 0 or identically calcd values.")]]
     bool           operator!=(const CircVal& c) const { return val != c.val;                                   }
+    #ifdef __GNUC__
+        #pragma GCC diagnostic pop
+    #endif
 
     // note that two circular values can be compared in several different ways.
     // check carefully if this is really what you need!
