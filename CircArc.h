@@ -56,6 +56,13 @@ public:
         return *this;
     }
 
+    // assignment from a circular arc length of the same type
+    CircArcLen& operator=(const CircArcLen& c)
+    {
+        l = c.l;
+        return *this;
+    }    
+
     // assignment from another type of circular arc length
     template<typename Type2>
     CircArcLen& operator= (const CircArcLen<Type2>& c)
@@ -155,8 +162,8 @@ public:
         if (a.l == Type::R) return false; // full-circle
 
         // ensure order: c1 --- a.c1 --- a.c2 --- c2
-        const double l1= CircVal<Type>::Pdist(c1, a.c1);
-        const double l2= CircVal<Type>::Pdist(c1, a.c2);
+        const double l1 = CircVal<Type>::Pdist(c1, a.c1);
+        const double l2 = CircVal<Type>::Pdist(c1, a.c2);
         return (l2 - l1 > -1e-12) && (l - l2 > -1e-12);
     }
 
@@ -197,33 +204,33 @@ public:
 
         unsigned m = 0, n = 0, p = 0, q[nSteps+1];
 
-        for (int i = 0; i<nSteps; ++i)
+        for (unsigned i = 0; i<nSteps; ++i)
             q[i] = 0;
 
-        for (int i = 0; i < nSteps; ++i)
-            for (int j = 0; j <= nSteps; ++j)
+        for (unsigned i = 0; i < nSteps; ++i)
+            for (unsigned j = 0; j <= nSteps; ++j)
             {
-                CircArc<Type> a1(Type::L+i*fStep, j*fStep); // start-point, length
+                CircArc<Type> a1(Type::L + i*fStep, j*fStep); // 1st arc: start-point, length
 
-                for (int k = 0; k < nSteps; ++k)
-                    for (int l = 0; l <= nSteps; ++l)
+                for (unsigned k = 0; k < nSteps; ++k)
+                    for (unsigned l = 0; l <= nSteps; ++l)
                     {
-                        CircArc<Type> a2(Type::L+k*fStep, l*fStep); // start-point, length
+                        CircArc<Type> a2(Type::L + k*fStep, l*fStep); // 2nd arc: start-point, length
 
-                        bool b1 = a1.Contains(a2); if (b1) ++m;
-                        bool b2 = a2.Contains(a1); if (b2) ++n;
+                        bool b1 = a1.Contains(a2); if (b1) ++m;       // if a2 is a sub-arc of a1
+                        bool b2 = a2.Contains(a1); if (b2) ++n;       // if a1 is a sub-arc of a2
 
-                        if   (a1 == a2) { assert(  b1 && b2 ); ++p; }
+                        if   (a1 == a2) { assert(  b1 && b2 ); ++p; } // if identical
                         else              assert(!(b1 && b2));
 
                         if (a1.Intersect(a2)) ++q[j];
                     }
             }
 
-        assert (p == 2*nSteps*nSteps                           ); // number of identical arcs
-        assert (m == nSteps*nSteps*(nSteps*nSteps+9*nSteps+8)/6); // number of sub-arcs
-        assert (m == n                                         );
-//      assert (q == ...)                                         // number of intersecting arcs
+        assert (p == 2*nSteps*nSteps                                     ); // number of identical arcs
+        assert (m ==   nSteps*nSteps * (nSteps*nSteps + 9*nSteps + 8) / 6); // number of times a2 is a sub-arc of a1
+        assert (m == n                                                   ); // number of times a1 is a sub-arc of a2 shuould be identical
+//      assert (q == ...)                                                   // number of intersecting arcs
 
         // --------------
     }
