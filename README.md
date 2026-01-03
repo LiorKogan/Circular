@@ -7,7 +7,7 @@ Copyright © 2015 Lior Kogan (koganlior1 [at] gmail [dot] com)
 Released under the Apache License, Version 2.0
 
 [Primary maintained copy](https://github.com/LiorKogan/Circular) <br>
-[Also at](https://github.com/DRNadler/Circular])
+[Also at](https://github.com/DRNadler/Circular)
 
 --
 
