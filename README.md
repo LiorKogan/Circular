@@ -31,4 +31,4 @@ This library provides a principled, well-documented foundation for working with 
 
 [Description and documentation](https://github.com/LiorKogan/Circular/blob/main/Doc/Circular.pdf)
 
-[CodeProject's Best C++ article, May 2011](https://www.codeproject.com/Articles/190833/Circular-Values-Math-and-Statistics-with-Cplusplus)
+[CodeProject's Best C++ article, May 2011](https://web.archive.org/web/20191016064937/https://www.codeproject.com/Articles/190833/Circular-Values-Math-and-Statistics-with-Cplusplus)
